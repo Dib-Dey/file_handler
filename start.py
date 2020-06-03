@@ -3,10 +3,12 @@ PyPo File Handler
 
 Usage:
     start.py rename <expr> <files> [--nono | -n] [--verbose | -v] [--force | -f]
+    start.py ls [-la]
     start.py help
     start.py version
 
 Options:
+    -la             List details
     -h --help       Show the screen
     -e --expr       Expression to match in format 's/old_name/new_name/'
     -n --nono       No action: Print name of the files to be re-named but don't rename
@@ -19,26 +21,28 @@ from pypo.file_handler import handler
 
 __version__ = "1.0.0"
 
-def main(arguments):
+def main(arg):
     _nono = False
     _verbose = False
     _force = False
     try:
-        if arguments['--nono'] or arguments['-n']:
+        if arg['--nono'] or arg['-n']:
             _nono = True
-        if arguments['--verbose'] or arguments['-v']:
+        if arg['--verbose'] or arg['-v']:
             _verbose = True
-        if  arguments['--force'] or arguments['-f']:
+        if  arg['--force'] or arg['-f']:
             _force = True
     except:
         pass
 
     obj = handler()
-    if arguments['version']:
+    if arg['version']:
         print(f'PyPo release version is : {__version__}')
-    elif arguments['rename']:
-        obj.rename(arguments['<expr>'],
-                   arguments['<files>'],
+    elif arg['ls']:
+        obj.list_file_detail(arg["-la"])
+    elif arg['rename']:
+        obj.rename(arg['<expr>'],
+                   arg['<files>'],
                    _nono,
                    _verbose,
                    _force

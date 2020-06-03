@@ -1,5 +1,5 @@
 import os
-
+from os import system
 
 class handler(object):
     @property
@@ -30,6 +30,12 @@ class handler(object):
             _dir = os.path.join(self.input_dir, _item)
             if os.path.isdir(_dir):
                 print(_item)
+
+    def list_file_detail(self, file_detail = False):
+        if file_detail:
+            os.system('ls -la')
+        else:
+            os.system('ls')
 
     def list_only_files(self, type_file):
         """
