@@ -1,13 +1,22 @@
 import os
 from os import system
+from . import utils
+import re
 
 class handler(object):
+    def __init__(self, dir_option = False, dir_input = None):
+        self.dir_option = dir_option
+        self.dir_input = dir_input
+
     @property
     def input_dir(self):
         """creates input_dir variable outside attribute constructor"""
-        return os.getcwd()
+        if self.dir_option:
+            return self.dir_input
+        else:
+            return os.getcwd()
 
-    def rename(self, do_expr = False, files = False, no_action = False, do_verbose = False, do_force = False):
+    def rename(self, do_expr = False, file_extn = False, no_action = False, do_verbose = False, do_force = False):
         """
         https://www.tecmint.com/rename-multiple-files-in-linux/
         :param do_expr:Expression to match in format `s/old_name/new_name/`
@@ -18,7 +27,23 @@ class handler(object):
         :return:
         """
         if no_action:
-            self.list_only_files(files)
+            self.list_only_files(file_extn)
+            return
+        #os.rename(r'file path\OLD file name.file type',r'file path\NEW file name.file type')
+        if len(do_expr.split('/')) != 3:
+            print(f"Your expression ({do_expr}) isn't in correct format (s/old_name/new_name)")
+        else:
+            if file_extn:
+                file_extn = file_extn.split(".")[-1]
+            list_files_to_replace = utils.check_dir_return_list_file_match_extn(self.input_dir,file_extn)
+            old_str, new_str = do_expr.split('/')[1], do_expr.split('/')[2]
+            for _item in list_files_to_replace:
+                if old_str in _item:
+                    new_file_name = re.sub(old_str,new_str,_item)
+                    if do_verbose or no_action:
+                        print(f"Info - old_file_name = {_item} replaced with new_file_name={new_file_name}")
+                    if not no_action:
+                        os.rename(os.path.join(self.input_dir,_item),os.path.join(self.input_dir,new_file_name))
 
     def list_only_dir(self):
         """
@@ -31,11 +56,15 @@ class handler(object):
             if os.path.isdir(_dir):
                 print(_item)
 
-    def list_file_detail(self, file_detail = False):
-        if file_detail:
-            os.system('ls -la')
+    def list_file_detail(self, _l = False, _a= False, _la= False):
+        if _l:
+            os.system('ls -l'+ " \"" + self.input_dir +"\"")
+        elif _a:
+            os.system('ls -a'+ " \"" + self.input_dir +"\"")
+        elif _la:
+            os.system('ls -la' + " \"" + self.input_dir +"\"")
         else:
-            os.system('ls')
+            os.system('ls' + " \"" + self.input_dir +"\"")
 
     def list_only_files(self, type_file):
         """
@@ -43,14 +72,11 @@ class handler(object):
         :return: list of files only
         """
         if type_file:
-            _file_exten = type_file.split(".")[-1]
-        else:
-            _file_exten = ""
-        _list = os.listdir(self.input_dir)
-        for _item in _list:
-            _file = os.path.join(self.input_dir,_item)
-            if os.path.isfile(_file) and _file.endswith(_file_exten):
-                print(_item)
+            type_file = type_file.split(".")[-1]
+
+        return_list = utils.check_dir_return_list_file_match_extn(self.input_dir, type_file)
+        for _item in return_list:
+            print(_item)
 
 if __name__ == '__main__':
     obj = handler()

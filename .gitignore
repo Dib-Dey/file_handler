@@ -25,3 +25,6 @@ __pycache__
 *.log
 *.sql
 *.sqlite
+
+#folder to ignore
+Test_folder/

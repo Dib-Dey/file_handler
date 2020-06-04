@@ -2,6 +2,23 @@ import os
 import shutil
 import re
 
+def check_dir_return_list_file_match_extn(input_dir = "", input_extn = "*"):
+    """
+    check a list and match items which has inout_string, make new_list and return
+    :param inpute_list:
+    :param input_extn : input file extension
+    :return:
+    """
+    if input_dir:
+        return_list = []
+        _list = os.listdir(input_dir)
+        for _item in _list:
+            _file = os.path.join(input_dir,_item)
+            if os.path.isfile(_file):
+                if _file.endswith(input_extn) or input_extn == "*":
+                        return_list.append(_item)
+        return return_list
+
 def path_converter(input_string=''):
     """
     converts windows path to linux and vice versa
@@ -30,7 +47,7 @@ def file_play(input_file = "", option = ""):
     :return: print statement or return file
     """
     import codecs
-    with codecs.open(input_file, 'r', encoding='ascii', errors='ignore') as in_file:
+    with codecs.open(input_file, 'r', encoding=' ', errors='ignore') as in_file:
         if option == "email":
             _list = ""
             for line in in_file:
