@@ -1,6 +1,6 @@
 import os
 from os import system
-from . import utils
+from pypo import utils
 import re
 
 class handler(object):

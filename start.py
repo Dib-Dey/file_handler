@@ -4,8 +4,6 @@ PyPo File Handler
 Usage:
     start.py ls [-l] [-a] [--la] [--dir <dir_name>]
     start.py rename <expr> <files> [--nono] [-n] [--verbose] [-v] [--force] [-f] [--dir <dir_name>]
-    start.py help
-    start.py version
 
 Options:
     -l              List of file details
