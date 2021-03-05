@@ -1,23 +1,58 @@
+"""
+module having all utility functions
+
+    >>> from pypo import utils
+
+"""
 import os
 import shutil
 import re
+import subprocess
 
-def check_dir_return_list_file_match_extn(input_dir = "", input_extn = "*"):
+def find_pip_pkg_dir(pkg_name = ""):
     """
-    check a list and match items which has inout_string, make new_list and return
-    :param inpute_list:
-    :param input_extn : input file extension
-    :return:
+        find the pip package from the p[ip list 
     """
-    if input_dir:
-        return_list = []
-        _list = os.listdir(input_dir)
-        for _item in _list:
-            _file = os.path.join(input_dir,_item)
-            if os.path.isfile(_file):
-                if _file.endswith(input_extn) or input_extn == "*":
-                        return_list.append(_item)
-        return return_list
+out = subprocess.Popen(['python','-m','pip','list'],
+                          stdout=subprocess.PIPE,
+                          stderr = subprocess.STDOUT,
+                          universal_newlines=True
+                       )
+    stdout, stderr = out.communicate()
+    item_list = stdout.split("\n")
+    for pip_pkg in item_list:
+        if pkg_name in pip_pkg:
+            try:
+                if (len(pip_pkg.split()) ==3):
+                    print(pip_pkg.split()[2])
+            except:
+                print("site-package")
+    subprocess.Popen.terminate(out)
+
+def file_mover(source='', destination= ''):
+    """
+    copy all files inside all directories in source directory and paste in destination directory
+
+        >>> from pypo import utils
+        >>> utils.file_mover(r"C:\Users\ddey\Downloads\photos_and_videos")
+
+    :param source: string of source path
+    :param destination: string of destination path
+    :return: path where files have been copied
+    """
+    if not destination:
+        destination = source
+    for dir in os.listdir(source):
+        files_dir = os.path.join(source, dir)
+        try:
+            total_files_in_files_directory = os.listdir(files_dir)
+        except:
+            total_files_in_files_directory = []
+        if total_files_in_files_directory:
+            for files in total_files_in_files_directory:
+                path_each_file = os.path.join(files_dir, files)
+                shutil.copy(path_each_file, destination)
+    return("Please check the files have ben copied in ({})".format(destination))
 
 def path_converter(input_string=''):
     """
@@ -47,7 +82,7 @@ def file_play(input_file = "", option = ""):
     :return: print statement or return file
     """
     import codecs
-    with codecs.open(input_file, 'r', encoding=' ', errors='ignore') as in_file:
+    with codecs.open(input_file, 'r', encoding='ascii', errors='ignore') as in_file:
         if option == "email":
             _list = ""
             for line in in_file:
@@ -80,7 +115,7 @@ def grep_intel_id(idsid ,column_name):
 
 def convert_user_email(path= "", wpath=""):
     """
-    convert authors-transform.txt with IDs to a format with full name, email for better git history log visualization
+    convert authors-transform.txt with IDs to a format with full name, email for better git history log visualization 
 
     :param path: path of given file
     :param wpath: path of saved new file
@@ -98,4 +133,6 @@ def convert_user_email(path= "", wpath=""):
     print("PYPO - conversion is complete. Check the new file {}".format(wpath))
 
 if __name__ == '__main__':
-    convert_user_email(r"C:\Projects\evtar_git\for_tgl_dekel\authors-transform.txt",r"C:\Projects\evtar_git\for_tgl_dekel\authors-transform.new.txt")
+    convert_user_email(r"C:\ddey_documents\Att58C9.tmp.txt",r"C:\ddey_documents\authors-transform.new.txt")
+
+
